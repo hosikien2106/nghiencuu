@@ -155,7 +155,6 @@ def scrape_automation_news():
         "https://www.deepmind.com/blog/rss",
     ]
     keywords = ["tự động hóa","automation","engineering","lý thuyết mạch điện","điện tử kỹ thuật số","kỹ thuật vi xử lý","robot","cnc","iot","trí tuệ nhân tạo","artificial","intelligence","SCADA"]
-
     count = 0
     # Giả lập Header Trình duyệt PC tiêu chuẩn để tránh bị Cloudflare kiểm soát luồng Cloud IP
     headers = {
