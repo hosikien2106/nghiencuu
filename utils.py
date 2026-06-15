@@ -138,23 +138,12 @@ def text_to_speech(text):
 def scrape_automation_news():
     """Hàm cào dữ liệu thông minh ứng dụng Thuật toán Chấm điểm Mật độ Từ khóa và Trích xuất Ảnh đa tầng"""
     rss_urls = [
-        "https://vnexpress.net/rss/khoa-hoc.rss",
-        "https://openai.com/blog/rss/", 
-        "https://www.sciencedaily.com/rss/all.xml",
-        "https://dantri.com.vn/rss/cong-nghe.rss",
-         https://tuoitre.vn/rss/cong-nghe.rss
-         "https://techcrunch.com/feed/",
-        "https://feeds.arstechnica.com/arstechnica/index",
-        "https://tiasang.com.vn/rss",
-        "https://www.technologyreview.com/feed/",
-        "https://ai.googleblog.com/feeds/posts/default",
-        "https://tuoitre.vn/rss/cong-nghe.rss",
         "https://vnexpress.net/rss/tin-cong-nghe.rss",
-        "https://www.wired.com/feed/rss",
-        "https://spectrum.ieee.org/feed/rss",
-        "https://www.deepmind.com/blog/rss",
+        "https://tiasang.com.vn/rss",
+        "https://www.sciencedaily.com/rss/all.xml"
     ]
-    keywords = ["tự động hóa","automation","engineering","lý thuyết mạch điện","điện tử kỹ thuật số","kỹ thuật vi xử lý","robot","cnc","iot","trí tuệ nhân tạo","artificial","intelligence","SCADA"]
+    
+    keywords = ["tự động hóa", "automation", "robot", "scada", "plc", "ai", "iot", "điều khiển", "cảm biến", "cnc", "nhà máy", "trí tuệ nhân tạo", "machine learning"]
     count = 0
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
