@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from google import genai
 from dotenv import load_dotenv
 from database import add_pending_news
-from urllib.parse import urljoin  # Thư viện chuẩn hóa URL tuyệt đối
+from urllib.parse import urljoin
 
 # Tải cấu hình bảo mật từ file .env
 load_dotenv()
@@ -156,7 +156,6 @@ def scrape_automation_news():
     ]
     keywords = ["tự động hóa","automation","engineering","lý thuyết mạch điện","điện tử kỹ thuật số","kỹ thuật vi xử lý","robot","cnc","iot","trí tuệ nhân tạo","artificial","intelligence","SCADA"]
     count = 0
-    # Giả lập Header Trình duyệt PC tiêu chuẩn để tránh bị Cloudflare kiểm soát luồng Cloud IP
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
     }
@@ -172,17 +171,14 @@ def scrape_automation_news():
                 link = entry.get('link', '')
                 pub_date = entry.get('published', entry.get('pubDate', ''))
                 
-                # 🌟 SỬA LỖI ĐỒNG BỘ CLOUD: Lấy từ cả summary và description để tránh mất mát dữ liệu cấu trúc
                 summary_raw = entry.get('summary', '') or entry.get('description', '')
                 
                 summary_text = ""
                 soup = None
                 if summary_raw:
-                    # Sử dụng html.parser chuẩn làm fallback an toàn trên môi trường Linux Cloud
                     soup = BeautifulSoup(summary_raw, "html.parser")
                     summary_text = soup.get_text()
 
-                # --- THUẬT TOÁN TÍNH ĐIỂM TỪ KHÓA ---
                 title_lower = title.lower()
                 summary_lower = summary_text.lower()
                 score = 0
@@ -191,14 +187,9 @@ def scrape_automation_news():
                     score += title_lower.count(kw) * 2
                     score += summary_lower.count(kw) * 1
                 
-                # Đạt tiêu chuẩn mật độ tri thức kỹ thuật
                 if score >= 2:
                     image_url = "https://via.placeholder.com/300x180"
                     
-                    # -----------------------------------------------------------------
-                    # 🌟 THUẬT TOÁN KIỂM TRA ẢNH ĐA TẦNG (ANTI-BUG FOR CLOUD ENVIRONMENT)
-                    # -----------------------------------------------------------------
-                    # TẦNG 1: Trích xuất từ các cấu trúc thẻ Media chuẩn RSS Quốc tế (Dành cho ScienceDaily...)
                     if 'media_thumbnail' in entry and entry.media_thumbnail:
                         image_url = entry.media_thumbnail[0].get('url', image_url)
                     elif 'media_content' in entry and entry.media_content:
@@ -209,19 +200,15 @@ def scrape_automation_news():
                                 image_url = enc.get('href', image_url)
                                 break
                     
-                    # TẦNG 2: Nếu không thấy thẻ Media, bóc tách thẻ <img> HTML (Dành cho VnExpress, Tia Sáng...)
                     if image_url == "https://via.placeholder.com/300x180" and soup:
                         img_tag = soup.find('img')
                         if img_tag:
-                            # Chống Lazy loading trên Server: Ưu tiên lấy data-src, data-original trước src
                             image_url = img_tag.get('data-src') or img_tag.get('data-original') or img_tag.get('src') or image_url
                     
-                    # TẦNG 3: Chuẩn hóa link (Nếu link thiếu giao thức '//' hoặc link tương đối '/assets/...')
                     if image_url and image_url != "https://via.placeholder.com/300x180":
                         if image_url.startswith('//'):
                             image_url = 'https:' + image_url
                         else:
-                            # Ép buộc chuyển đổi mọi đường dẫn tương đối thành link tuyệt đối chuẩn https://
                             image_url = urljoin(link, image_url)
                     
                     add_pending_news(title, link, image_url, pub_date)
@@ -231,22 +218,3 @@ def scrape_automation_news():
             continue
             
     return count
-
-def extract_text_from_pdf(uploaded_file):
-    """
-    Hàm đọc và trích xuất toàn bộ văn bản (text) từ file PDF tải lên
-    """
-    import pypdf
-    text = ""
-    try:
-        # Đọc file PDF từ bộ nhớ đệm Streamlit
-        reader = pypdf.PdfReader(uploaded_file)
-        for page in reader.pages:
-            page_text = page.extract_text()
-            if page_text:
-                text += page_text + "\n"
-    except Exception as e:
-        print(f"Lỗi khi bóc tách PDF: {e}")
-        return f"Lỗi: Không thể đọc được file PDF này. Chi tiết: {str(e)}"
-    
-    return text
