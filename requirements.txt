@@ -1,0 +1,14 @@
+streamlit
+google-genai
+pillow
+python-dotenv
+beautifulsoup4
+lxml
+feedparser
+requests
+pypdf
+gTTS
+plotly
+numpy
+scipy
+pandas
